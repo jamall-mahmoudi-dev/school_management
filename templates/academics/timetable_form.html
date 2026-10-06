@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}افزودن جلسه به برنامه هفتگی{% endblock %}
+{% block page_title %}افزودن جلسه به برنامه هفتگی{% endblock %}
+{% block content %}
+<div class="card" style="max-width:600px">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% include "core/_form_fields.html" %}
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-brand"><i class="bi bi-check-lg"></i> ذخیره</button>
+                <a href="{% url 'academics:class_list' %}" class="btn btn-outline-secondary">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

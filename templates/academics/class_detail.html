@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ school_class.name }}{% endblock %}
+{% block page_title %}{{ school_class.name }}{% endblock %}
+{% block page_subtitle %}پایه {{ school_class.grade_level }} — سال تحصیلی {{ school_class.academic_year }}{% endblock %}
+{% block content %}
+
+{% if user.is_superuser or user.is_admin or user.is_manager %}
+<div class="mb-3 d-flex gap-2">
+    <a href="{% url 'academics:class_edit' school_class.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i> ویرایش کلاس</a>
+    <a href="{% url 'academics:class_delete' school_class.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> حذف کلاس</a>
+    <a href="{% url 'attendance:take' school_class.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-calendar-check-fill"></i> حضور و غیاب</a>
+    <a href="{% url 'attendance:class_report' school_class.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-bar-chart-fill"></i> گزارش حضور</a>
+</div>
+{% endif %}
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-people-fill"></i> دانش‌آموزان ({{ students.count }})</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th class="px-3">نام</th><th>شماره دانش‌آموزی</th></tr></thead>
+                    <tbody>
+                    {% for s in students %}
+                        <tr><td class="px-3">{{ s.user.get_full_name }}</td><td>{{ s.student_number }}</td></tr>
+                    {% empty %}
+                        <tr><td colspan="2" class="text-center text-muted py-4">دانش‌آموزی در این کلاس ثبت نشده است.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar3"></i> برنامه هفتگی</span>
+                {% if user.is_superuser or user.is_admin or user.is_manager %}
+                <a href="{% url 'academics:timetable_add' %}?class={{ school_class.pk }}" class="btn btn-sm btn-brand"><i class="bi bi-plus-lg"></i></a>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th class="px-3">روز</th><th>درس</th><th>معلم</th><th>ساعت</th><th></th></tr></thead>
+                    <tbody>
+                    {% for t in timetable %}
+                        <tr>
+                            <td class="px-3">{{ t.get_weekday_display }}</td>
+                            <td>{{ t.subject }}</td>
+                            <td>{{ t.teacher }}</td>
+                            <td>{{ t.start_time|time:"H:i" }} - {{ t.end_time|time:"H:i" }}</td>
+                            <td>
+                                {% if user.is_superuser or user.is_admin or user.is_manager %}
+                                <a href="{% url 'academics:timetable_delete' t.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-4">برنامه‌ای ثبت نشده است.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

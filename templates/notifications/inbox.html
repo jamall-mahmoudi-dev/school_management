@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}پیام‌ها{% endblock %}
+{% block page_title %}صندوق پیام‌ها{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">پیام‌های من</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th class="px-3">فرستنده</th><th>گیرنده</th><th>متن</th><th>تاریخ</th></tr></thead>
+                    <tbody>
+                    {% for m in messages_list %}
+                        <tr>
+                            <td class="px-3">{{ m.sender }}</td>
+                            <td>{{ m.recipient }}</td>
+                            <td>{{ m.body|truncatechars:60 }}</td>
+                            <td>{{ m.created_at|date:"Y/m/d H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">پیامی وجود ندارد.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">ارسال پیام جدید</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% include "core/_form_fields.html" %}
+                    <button type="submit" class="btn btn-brand mt-2"><i class="bi bi-send-fill"></i> ارسال</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card mb-3">
+            <div class="card-header"><i class="bi bi-calendar3"></i> برنامه امروز</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th class="px-3">کلاس</th><th>درس</th><th>از ساعت</th><th>تا ساعت</th></tr></thead>
+                    <tbody>
+                    {% for t in todays_classes %}
+                        <tr>
+                            <td class="px-3">{{ t.school_class }}</td>
+                            <td>{{ t.subject }}</td>
+                            <td>{{ t.start_time|time:"H:i" }}</td>
+                            <td>{{ t.end_time|time:"H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">برای امروز جلسه‌ای ثبت نشده است.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if homeroom_classes %}
+        <div class="card">
+            <div class="card-header"><i class="bi bi-star-fill"></i> کلاس(های) تحت مسئولیت شما</div>
+            <div class="card-body d-flex flex-wrap gap-2">
+                {% for c in homeroom_classes %}
+                <a href="{% url 'academics:class_detail' c.pk %}" class="btn btn-outline-secondary">{{ c.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card mb-3">
+            <div class="card-header"><i class="bi bi-lightning-charge-fill"></i> دسترسی سریع</div>
+            <div class="card-body d-grid gap-2">
+                <a href="{% url 'attendance:select' %}" class="btn btn-outline-secondary text-start"><i class="bi bi-calendar-check-fill"></i> ثبت حضور و غیاب</a>
+                <a href="{% url 'grades:grade_add' %}" class="btn btn-outline-secondary text-start"><i class="bi bi-clipboard-data-fill"></i> ثبت نمره</a>
+                <a href="{% url 'notifications:announcement_add' %}" class="btn btn-outline-secondary text-start"><i class="bi bi-megaphone-fill"></i> انتشار اطلاعیه</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><i class="bi bi-megaphone-fill"></i> اطلاعیه‌های اخیر</div>
+            <div class="card-body">
+                {% for a in announcements %}
+                <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="fw-bold">{{ a.title }}</div>
+                    <div class="text-muted small">{{ a.content|truncatechars:80 }}</div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center py-3 mb-0">اطلاعیه‌ای وجود ندارد.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

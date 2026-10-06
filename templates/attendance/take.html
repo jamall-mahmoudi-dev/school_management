@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}حضور و غیاب {{ school_class }}{% endblock %}
+{% block page_title %}حضور و غیاب — {{ school_class }}{% endblock %}
+{% block page_subtitle %}تاریخ: {{ date }}{% endblock %}
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="d-flex gap-2 align-items-end">
+            <div>
+                <label class="form-label small mb-1">تاریخ</label>
+                <input type="date" name="date" value="{{ date }}" class="form-control form-control-sm">
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" type="submit">نمایش</button>
+        </form>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="date" value="{{ date }}">
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table mb-0 align-middle">
+                <thead><tr><th class="px-3">دانش‌آموز</th><th>وضعیت</th><th>توضیح</th></tr></thead>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td class="px-3">{{ row.student.user.get_full_name }}</td>
+                        <td>
+                            <div class="d-flex gap-3 flex-wrap">
+                            {% for value, label in status_choices %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="status_{{ row.student.id }}" value="{{ value }}" id="s{{ row.student.id }}_{{ value }}" {% if row.status == value %}checked{% endif %}>
+                                    <label class="form-check-label small" for="s{{ row.student.id }}_{{ value }}">{{ label }}</label>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </td>
+                        <td><input type="text" name="note_{{ row.student.id }}" value="{{ row.note }}" class="form-control form-control-sm" placeholder="توضیح اختیاری"></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="text-center text-muted py-4">دانش‌آموزی در این کلاس ثبت نشده است.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if rows %}
+    <button type="submit" class="btn btn-brand mt-3"><i class="bi bi-check-lg"></i> ثبت حضور و غیاب</button>
+    {% endif %}
+</form>
+{% endblock %}

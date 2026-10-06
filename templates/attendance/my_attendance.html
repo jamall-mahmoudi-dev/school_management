@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}حضور و غیاب{% endblock %}
+{% block page_title %}حضور و غیاب{% if student %} — {{ student.user.get_full_name }}{% endif %}{% endblock %}
+{% block content %}
+
+{% if children %}
+<div class="mb-3 d-flex gap-2 flex-wrap">
+    {% for c in children %}
+    <a href="{% url 'attendance:my_child' c.pk %}" class="btn btn-sm {% if c == student %}btn-brand{% else %}btn-outline-secondary{% endif %}">{{ c.user.get_full_name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if student %}
+<div class="row g-3 mb-3">
+    {% for label, count in summary.items %}
+    <div class="col-6 col-lg-3">
+        <div class="stat-card {% if label == 'حاضر' %}stat-green{% elif label == 'غایب' %}stat-purple{% elif label == 'با تاخیر' %}stat-orange{% else %}stat-blue{% endif %}">
+            <div class="stat-value">{{ count }}</div>
+            <div class="stat-label">{{ label }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table mb-0">
+            <thead><tr><th class="px-3">تاریخ</th><th>کلاس</th><th>وضعیت</th><th>توضیح</th></tr></thead>
+            <tbody>
+            {% for r in records %}
+                <tr>
+                    <td class="px-3">{{ r.date|date:"Y/m/d" }}</td>
+                    <td>{{ r.school_class }}</td>
+                    <td><span class="status-pill status-{{ r.status }}">{{ r.get_status_display }}</span></td>
+                    <td>{{ r.note|default:"—" }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-4">رکوردی ثبت نشده است.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<p class="text-muted text-center py-5">دانش‌آموزی برای نمایش یافت نشد.</p>
+{% endif %}
+{% endblock %}

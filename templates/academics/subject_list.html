@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}دروس{% endblock %}
+{% block page_title %}دروس{% endblock %}
+{% block page_subtitle %}لیست دروس ارائه‌شده در مدرسه{% endblock %}
+{% block content %}
+{% if user.is_superuser or user.is_admin or user.is_manager %}
+<div class="mb-3 text-start">
+    <a href="{% url 'academics:subject_add' %}" class="btn btn-brand"><i class="bi bi-plus-lg"></i> درس جدید</a>
+</div>
+{% endif %}
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table mb-0">
+            <thead><tr><th class="px-3">نام درس</th><th>کد</th><th>ساعت هفتگی</th><th></th></tr></thead>
+            <tbody>
+            {% for s in subjects %}
+                <tr>
+                    <td class="px-3">{{ s.name }}</td>
+                    <td>{{ s.code }}</td>
+                    <td>{{ s.weekly_hours }}</td>
+                    <td class="d-flex gap-2">
+                        {% if user.is_superuser or user.is_admin or user.is_manager %}
+                        <a href="{% url 'academics:subject_edit' s.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'academics:subject_delete' s.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-4">درسی ثبت نشده است.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

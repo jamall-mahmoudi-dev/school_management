@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}اطلاعیه جدید{% endblock %}
+{% block page_title %}انتشار اطلاعیه جدید{% endblock %}
+{% block content %}
+<div class="card" style="max-width:650px">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% include "core/_form_fields.html" %}
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-brand"><i class="bi bi-send-fill"></i> انتشار</button>
+                <a href="{% url 'notifications:announcement_list' %}" class="btn btn-outline-secondary">انصراف</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

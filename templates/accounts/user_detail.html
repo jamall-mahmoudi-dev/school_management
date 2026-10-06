@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ person.get_full_name }}{% endblock %}
+{% block page_title %}{{ person.get_full_name|default:person.username }}{% endblock %}
+{% block page_subtitle %}{{ person.get_role_display }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">اطلاعات حساب</div>
+            <div class="card-body">
+                <p><strong>نام کاربری:</strong> {{ person.username }}</p>
+                <p><strong>ایمیل:</strong> {{ person.email|default:"—" }}</p>
+                <p><strong>تلفن:</strong> {{ person.phone_number|default:"—" }}</p>
+                <p><strong>کد ملی:</strong> {{ person.national_code|default:"—" }}</p>
+                <p class="mb-0"><strong>وضعیت:</strong>
+                    {% if person.is_active %}<span class="status-pill status-PRESENT">فعال</span>
+                    {% else %}<span class="status-pill status-ABSENT">غیرفعال</span>{% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">اطلاعات تخصصی</div>
+            <div class="card-body">
+                {% if person.role == "TEACHER" and person.teacher_profile %}
+                    <p><strong>دروس تدریسی:</strong> {% for s in person.teacher_profile.subjects.all %}{{ s.name }}{% if not forloop.last %}، {% endif %}{% empty %}—{% endfor %}</p>
+                    <p class="mb-0"><strong>تاریخ استخدام:</strong> {{ person.teacher_profile.hire_date|default:"—" }}</p>
+                {% elif person.role == "STUDENT" and person.student_profile %}
+                    <p><strong>شماره دانش‌آموزی:</strong> {{ person.student_profile.student_number }}</p>
+                    <p class="mb-0"><strong>کلاس:</strong> {{ person.student_profile.school_class|default:"—" }}</p>
+                {% elif person.role == "PARENT" and person.parent_profile %}
+                    <p class="mb-0"><strong>فرزندان:</strong> {% for c in person.parent_profile.children.all %}{{ c.user.get_full_name }}{% if not forloop.last %}، {% endif %}{% empty %}—{% endfor %}</p>
+                {% else %}
+                    <p class="text-muted mb-0">اطلاعات تخصصی برای این نقش وجود ندارد.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-3">
+    <a href="{% url 'accounts:user_edit' person.pk %}" class="btn btn-brand"><i class="bi bi-pencil"></i> ویرایش</a>
+    <a href="{% url 'accounts:user_list' %}" class="btn btn-outline-secondary">بازگشت</a>
+</div>
+{% endblock %}

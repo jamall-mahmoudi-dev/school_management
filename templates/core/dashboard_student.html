@@ -1,0 +1,73 @@
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header"><i class="bi bi-person-badge-fill"></i> پروفایل من</div>
+            <div class="card-body">
+                {% if student_profile %}
+                <p class="mb-1"><strong>شماره دانش‌آموزی:</strong> {{ student_profile.student_number }}</p>
+                <p class="mb-1"><strong>کلاس:</strong> {{ student_profile.school_class|default:"—" }}</p>
+                <p class="mb-0"><strong>تاریخ ثبت‌نام:</strong> {{ student_profile.enrollment_date|date:"Y/m/d" }}</p>
+                {% else %}
+                <p class="text-muted mb-0">پروفایل دانش‌آموزی برای شما تعریف نشده است.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-charge-fill"></i> دسترسی سریع</div>
+            <div class="card-body d-grid gap-2">
+                <a href="{% url 'grades:report_card' %}" class="btn btn-outline-secondary text-start"><i class="bi bi-clipboard-data-fill"></i> مشاهده کارنامه</a>
+                <a href="{% url 'attendance:my' %}" class="btn btn-outline-secondary text-start"><i class="bi bi-calendar-check-fill"></i> مشاهده حضور و غیاب</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-clipboard-data-fill"></i> آخرین نمرات</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th class="px-3">درس</th><th>نمره</th><th>تاریخ</th></tr></thead>
+                    <tbody>
+                    {% for g in recent_grades %}
+                        <tr><td class="px-3">{{ g.subject }}</td><td>{{ g.score }} / {{ g.max_score }}</td><td>{{ g.date|date:"Y/m/d" }}</td></tr>
+                    {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted py-4">نمره‌ای ثبت نشده است.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-calendar-check-fill"></i> آخرین وضعیت حضور</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th class="px-3">تاریخ</th><th>وضعیت</th></tr></thead>
+                    <tbody>
+                    {% for r in recent_attendance %}
+                        <tr><td class="px-3">{{ r.date|date:"Y/m/d" }}</td><td><span class="status-pill status-{{ r.status }}">{{ r.get_status_display }}</span></td></tr>
+                    {% empty %}
+                        <tr><td colspan="2" class="text-center text-muted py-4">رکوردی ثبت نشده است.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header"><i class="bi bi-megaphone-fill"></i> اطلاعیه‌های اخیر</div>
+    <div class="card-body">
+        {% for a in announcements %}
+        <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+            <div class="fw-bold">{{ a.title }}</div>
+            <div class="text-muted small">{{ a.content|truncatechars:120 }}</div>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center py-3 mb-0">اطلاعیه‌ای وجود ندارد.</p>
+        {% endfor %}
+    </div>
+</div>
