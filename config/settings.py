@@ -153,5 +153,3 @@ MESSAGE_TAGS = {
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
-
-#Bahram
